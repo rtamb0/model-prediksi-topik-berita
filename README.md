@@ -1,5 +1,7 @@
 # Prediksi Topik Berita
 
+# WARNING: Repo ini tidak memberikan model inference yang dibutuhkan untuk web ini. Harap meletakkan model inference dalam ./backend/model dengan format .safetensors.
+
 Web app untuk memprediksi kategori/topik berita dari teks yang dimasukkan pengguna. Proyek ini terdiri dari:
 
 - Backend FastAPI yang memuat model klasifikasi teks dari folder `backend/model`
