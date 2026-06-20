@@ -161,3 +161,6 @@ vite.config.ts.timestamp-*
 
 # Safetensors
 *.safetensors
+
+#Py Cache
+__pycache__/
