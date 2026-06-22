@@ -58,13 +58,27 @@ jobs:
           -p 8000:8000 \
           -v ${{ github.workspace }}/model-data:/app/model \
           ${{ env.API_IMAGE }}:latest
-          
+
+      - name: Wait for API readiness
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8000/docs > /dev/null; then
+              echo "API is ready"
+              exit 0
+            fi
+            echo "Waiting for API... ($i/30)"
+            sleep 2
+          done
+          echo "API did not become ready in time"
+          docker logs api || true
+          exit 1
+
       - name: Test API
         run: |
-          curl -X POST \
-          -H "Content-Type: application/json" \
-          -d '{"text":"Berita ekonomi Indonesia"}' \
-          http://localhost:8000/predict
+          curl -fsS -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"text":"Berita ekonomi Indonesia"}' \
+            http://localhost:8000/predict
 
       - name: Check container status
         run: |
