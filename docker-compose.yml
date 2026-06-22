@@ -28,7 +28,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./model-data:/app/model:ro
+      - ./model-data/model.safetensors:/app/model/model.safetensors:ro
     environment:
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
     networks:
