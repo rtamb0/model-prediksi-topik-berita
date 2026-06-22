@@ -53,10 +53,12 @@ jobs:
           
       - name: Run API container
         run: |
-          docker run -d -p 8000:8000 \
+          docker run -d \
+          --name api \
+          -p 8000:8000 \
           -v ${{ github.workspace }}/model-data:/app/model \
           ${{ env.API_IMAGE }}:latest
-
+          
       - name: Test API
         run: |
           curl -X POST \
