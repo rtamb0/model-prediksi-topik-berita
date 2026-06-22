@@ -18,12 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download model
+      - name: Download model weights
         run: |
-          mkdir -p model-data
           curl -L \
             https://huggingface.co/rtamb0/indonesian-news-category-predict-indobert/resolve/main/model.safetensors \
-            -o model-data/model.safetensors
+            -o backend/model/model.safetensors
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -56,7 +55,7 @@ jobs:
           docker run -d \
           --name api \
           -p 8000:8000 \
-          -v ${{ github.workspace }}/model-data:/app/model \
+          -v ${{ github.workspace }}/backend/model:/app/model \
           ${{ env.API_IMAGE }}:latest
 
       - name: Wait for API readiness
