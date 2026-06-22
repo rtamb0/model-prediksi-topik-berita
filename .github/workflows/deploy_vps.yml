@@ -1,6 +1,9 @@
 name: Deploy Prediksi Berita
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
@@ -54,9 +57,24 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
             cd /opt/prediksi-berita
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USER }} --password-stdin
             docker compose down --remove-orphans || true
             docker compose pull
             docker compose up -d --remove-orphans
+
+            for i in {1..30}; do
+              if curl -fsS http://localhost/api/docs > /dev/null; then
+                echo "API is ready"
+                break
+              fi
+              echo "Waiting for API... ($i/30)"
+              sleep 2
+            done
+
+            curl -fsS -X POST http://localhost/api/predict \
+              -H "Content-Type: application/json" \
+              -d '{"text":"Presiden menghadiri rapat kabinet di istana negara"}'
+
             docker image prune -f
