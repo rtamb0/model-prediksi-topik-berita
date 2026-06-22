@@ -1,0 +1,53 @@
+name: Deploy Prediksi Berita (GHCR Build Only)
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  WEB_IMAGE: ghcr.io/${{ github.repository_owner }}/prediksi-berita-web
+  API_IMAGE: ghcr.io/${{ github.repository_owner }}/prediksi-berita-api
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push API
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.API_IMAGE }}:latest
+            ${{ env.API_IMAGE }}:${{ github.sha }}
+
+      - name: Build & Push Web
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.WEB_IMAGE }}:latest
+            ${{ env.WEB_IMAGE }}:${{ github.sha }}
+          build-args: VITE_API_BASE_URL=/api
+          
+      - name: Run API container
+        run: |
+          docker run -d -p 8000:8000 \
+            -v ${{ github.workspace }}/model-data:/app/model \
+            ${{ env.API_IMAGE }}:latest
+      - name: Test API
+        run: curl http://localhost:8000/predict

@@ -1,0 +1,40 @@
+services:
+  prediksi-berita-proxy:
+    image: nginx:alpine
+    container_name: prediksi-berita-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - prediksi-berita-web
+      - prediksi-berita-api
+    networks:
+      - prediksi-berita-network
+    restart: unless-stopped
+
+  prediksi-berita-web:
+    image: ghcr.io/rtamb0/prediksi-berita-web:latest
+    container_name: prediksi-berita-web
+    expose:
+      - "3000"
+    networks:
+      - prediksi-berita-network
+    restart: unless-stopped
+
+  prediksi-berita-api:
+    image: ghcr.io/rtamb0/prediksi-berita-api:latest
+    container_name: prediksi-berita-api
+    expose:
+      - "8000"
+    volumes:
+      - ./model-data:/app/model:ro
+    environment:
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
+    networks:
+      - prediksi-berita-network
+    restart: unless-stopped
+
+networks:
+  prediksi-berita-network:
+    driver: bridge
