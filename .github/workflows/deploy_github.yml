@@ -56,10 +56,19 @@ jobs:
           docker run -d -p 8000:8000 \
           -v ${{ github.workspace }}/model-data:/app/model \
           ${{ env.API_IMAGE }}:latest
-          
+
       - name: Test API
         run: |
           curl -X POST \
           -H "Content-Type: application/json" \
           -d '{"text":"Berita ekonomi Indonesia"}' \
           http://localhost:8000/predict
+
+      - name: Check container status
+        run: |
+          docker ps -a
+
+      - name: Show API logs
+        if: always()
+        run: |
+          docker logs api
