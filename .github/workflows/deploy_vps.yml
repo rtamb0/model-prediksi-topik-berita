@@ -97,4 +97,23 @@ jobs:
               -H "Content-Type: application/json" \
               -d '{"text":"Presiden menghadiri rapat kabinet di istana negara"}'
 
+            asset_urls=$(curl -fsS http://localhost/nlp/prediksi-berita/ | grep -o '/nlp/prediksi-berita/assets/[^"'"'"']*' | sort -u)
+            if [ -z "$asset_urls" ]; then
+              echo "No frontend asset URLs found in the page HTML"
+              exit 1
+            fi
+
+            for asset_url in $asset_urls; do
+              content_type=$(curl -fsSI "http://localhost${asset_url}" | awk -F': ' 'tolower($1)=="content-type" {print $2}' | tr -d '\r')
+              case "$content_type" in
+                text/html*)
+                  echo "Asset ${asset_url} returned HTML instead of a static file"
+                  exit 1
+                  ;;
+                *)
+                  echo "Asset ${asset_url} OK: ${content_type}"
+                  ;;
+              esac
+            done
+
             docker image prune -f
