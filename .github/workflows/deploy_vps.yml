@@ -44,7 +44,8 @@ jobs:
           tags: |
             ${{ env.WEB_IMAGE }}:latest
             ${{ env.WEB_IMAGE }}:${{ github.sha }}
-          build-args: VITE_API_BASE_URL=/api
+          build-args: |
+            VITE_API_BASE_URL=api
 
   deploy:
     runs-on: ubuntu-latest
@@ -85,7 +86,7 @@ jobs:
             docker-compose up -d --remove-orphans
 
             for i in {1..30}; do
-              if curl -fsS http://localhost/api/docs > /dev/null; then
+              if curl -fsS http://localhost/nlp/prediksi-berita/api/docs > /dev/null; then
                 echo "API is ready"
                 break
               fi
@@ -93,7 +94,7 @@ jobs:
               sleep 2
             done
 
-            curl -fsS -X POST http://localhost/api/predict \
+            curl -fsS -X POST http://localhost/nlp/prediksi-berita/api/predict \
               -H "Content-Type: application/json" \
               -d '{"text":"Presiden menghadiri rapat kabinet di istana negara"}'
 
