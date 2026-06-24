@@ -97,6 +97,15 @@ jobs:
               -H "Content-Type: application/json" \
               -d '{"text":"Presiden menghadiri rapat kabinet di istana negara"}'
 
+            echo "Checking public routes and headers:"
+            for path in / /nlp/prediksi-berita /nlp/prediksi-berita/ /nlp/prediksi-berita/api/docs /nlp/prediksi-berita/api/predict; do
+              echo "--- ${path} ---"
+              curl -sS -o /tmp/route.body -D /tmp/route.headers -w 'HTTP %{http_code}\n' "http://localhost${path}" || true
+              sed -n '1,20p' /tmp/route.headers
+              echo "Body preview:"
+              sed -n '1,10p' /tmp/route.body
+            done
+
             asset_urls=$(curl -fsS http://localhost/nlp/prediksi-berita/ | grep -o '/nlp/prediksi-berita/assets/[^"'"'"']*' | sort -u)
             if [ -z "$asset_urls" ]; then
               echo "No frontend asset URLs found in the page HTML"
@@ -104,7 +113,12 @@ jobs:
             fi
 
             for asset_url in $asset_urls; do
-              content_type=$(curl -fsSI "http://localhost${asset_url}" | awk -F': ' 'tolower($1)=="content-type" {print $2}' | tr -d '\r')
+              echo "--- ASSET ${asset_url} ---"
+              curl -sS -o /tmp/asset.body -D /tmp/asset.headers -w 'HTTP %{http_code}\n' "http://localhost${asset_url}" || true
+              sed -n '1,20p' /tmp/asset.headers
+              echo "Body preview:"
+              sed -n '1,5p' /tmp/asset.body
+              content_type=$(awk -F': ' 'tolower($1)=="content-type" {print $2}' /tmp/asset.headers | tr -d '\r')
               case "$content_type" in
                 text/html*)
                   echo "Asset ${asset_url} returned HTML instead of a static file"
