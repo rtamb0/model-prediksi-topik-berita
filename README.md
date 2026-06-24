@@ -124,6 +124,23 @@ Vite dikonfigurasi berjalan di `http://localhost:8080`.
 - Frontend secara langsung memanggil backend di `http://localhost:8000`.
 - Folder `backend/model` harus tetap berada di lokasi yang sama karena dipakai langsung oleh `transformers.pipeline()`.
 
+## CI/CD VPS
+
+Push ke branch `main` akan menjalankan workflow GitHub Actions yang:
+
+1. Build dan push image frontend/backend ke GHCR.
+2. Mengirim `docker-compose.yml` ke `/opt/prediksi-berita/` di VPS.
+3. Mengirim `nginx/nginx.conf` ke `/opt/prediksi-berita/nginx/` di VPS.
+4. Menjalankan ulang stack Docker di VPS dengan config terbaru.
+
+Pastikan secrets berikut sudah diatur di repository GitHub:
+
+- `VPS_HOST`
+- `VPS_USER`
+- `VPS_SSH_KEY`
+- `GHCR_TOKEN`
+- `GHCR_USER`
+
 ## Build Frontend
 
 Untuk membuat build produksi frontend:
