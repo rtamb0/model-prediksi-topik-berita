@@ -2,6 +2,7 @@ import { useState } from "react";
 
 function TextareaForm({ handleSubmit, placeholder, loading }) {
   const [text, setText] = useState("");
+  const MAX_CHARS = 2500; // Limit matching the backend
 
   const handleChange = (e) => {
     setText(e.target.value);
@@ -17,9 +18,15 @@ function TextareaForm({ handleSubmit, placeholder, loading }) {
           onChange={handleChange}
           placeholder={placeholder}
           rows={8}
-          disabled={loading} // Disables text area while fetching
+          maxLength={MAX_CHARS} // Prevents user from typing past the limit
+          disabled={loading}
         />
+        {/* Character Counter */}
+        <div className="text-end text-secondary small mt-2 fw-medium">
+          {text.length} / {MAX_CHARS} karakter
+        </div>
       </div>
+      
       <button 
         type="submit" 
         className="btn btn-primary w-100 py-3 fw-bold shadow-sm"
