@@ -26,9 +26,9 @@ function TextareaForm({ handleSubmit, placeholder, loading }) {
           {text.length} / {MAX_CHARS} karakter
         </div>
       </div>
-      
-      <button 
-        type="submit" 
+
+      <button
+        type="submit"
         className="btn btn-primary w-100 py-3 fw-bold shadow-sm"
         style={{ borderRadius: "1rem", transition: "all 0.3s" }}
         disabled={loading || text.trim() === ""}
@@ -39,7 +39,7 @@ function TextareaForm({ handleSubmit, placeholder, loading }) {
             Menganalisis...
           </>
         ) : (
-          "Prediksi Sekarang"
+          "Prediksi Kategori Berita"
         )}
       </button>
     </form>
