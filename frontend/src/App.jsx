@@ -53,11 +53,11 @@ function App() {
   };
 
   return (
-    <div className=" bg-light container-fluid d-flex justify-content-center align-items-center min-vh-100">
-      <div className="row row-cols-2 gap-3 justify-content-center">
+    <div className="bg-light container-fluid min-vh-100" style={{ paddingTop: "4rem", paddingBottom: "6rem" }}>
+      <div className="row gap-3 justify-content-center w-100 mx-auto">
         <div
-          className="card border-0 shadow-lg p-4 p-md-5 col-8"
-          style={{ borderRadius: "1.5rem" }}
+          className="card border-0 shadow-lg p-4 p-md-5 col-12 col-md-10 col-lg-8"
+          style={{ borderRadius: "1.5rem", maxWidth: "800px" }}
         >
           <div className="text-center mb-4">
             <h1 className="fw-bold text-dark mb-2">Deteksi Kategori Berita</h1>
@@ -86,13 +86,9 @@ function App() {
             placeholder="Masukkan teks berita di sini..."
             loading={loading}
           />
-        </div>
-        <div
-          className="card border-0 shadow-lg p-4 p-md-5 col-3"
-          style={{ borderRadius: "1.5rem" }}
-        >
+
           {/* Enhanced Results Section */}
-          <div>
+          <div className="mt-5">
             <h5 className="fw-bold border-bottom pb-3 mb-4 text-dark">
               Hasil Prediksi
             </h5>
